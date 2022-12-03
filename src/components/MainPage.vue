@@ -47,8 +47,8 @@ function addNode(){
 function addNode_(loc={x:20,y:20}) {
   const nodeId = `node${nextNodeIndex.value}`
   const name = `N${nextNodeIndex.value}`
-  nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect"}:
-  { name: name , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect"}
+  nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect", id:nodeId}:
+  { name: name , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:nodeId}
   nextNodeIndex.value++
   data.layouts.nodes[nodeId]=loc
 
@@ -145,6 +145,8 @@ const eventHandlers: vNG.EventHandlers = {
 </div>
 
 <div class="demo-control-panel">
+  <el-tabs type="border-card">
+    <el-tab-pane label="Structure">
     <div>
       <label>Node:</label>
       <el-button @click="addNode">add</el-button>
@@ -164,13 +166,38 @@ const eventHandlers: vNG.EventHandlers = {
         >remove</el-button
       >
     </div>
-    <div >
+
+  </el-tab-pane>
+      <el-tab-pane label="Appearance">
+
+        <div >
       <el-checkbox 
       min="data.configs.view.minZoomLevel"
       max="data.configs.view.maxZoomLevel"
       v-model="data.configs.view.scalingObjects">Scaling objects</el-checkbox>
       <el-slider-custom-zoom v-model="zoomLevel" />
     </div>
+
+        <div class="control">
+          <label>Field to show on the label:</label>
+          <el-select v-model="data.configs.node.label.text">
+            <el-option label="id" value="id" />
+            <el-option label="name" value="name" />
+            <el-option label="type" value="type" />
+          </el-select>
+        </div>
+
+        <demo-label-config-panel
+          v-model:visible="data.configs.node.label.visible"
+          v-model:fontFamily="data.configs.node.label.fontFamily"
+          v-model:fontSize="data.configs.node.label.fontSize"
+          v-model:lineHeight="data.configs.node.label.lineHeight"
+          v-model:color="data.configs.node.label.color"
+          v-model:margin="data.configs.node.label.margin"
+          v-model:direction="data.configs.node.label.direction"
+        />
+      </el-tab-pane>
+  </el-tabs>
   </div>
 
 <v-network-graph

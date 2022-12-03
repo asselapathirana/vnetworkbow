@@ -9,9 +9,9 @@ export interface Node extends vNG.Node {
 
 
 const nodes: Nodes = {
-  node1: { name: "N1", selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect"},
-  FIXED: { name: "N2" , selectable: true, draggable: false, size: 15, width: 30, height:15, color: "red", type:"circle"},
-  node3: { name: "N3" , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect"},
+  node1: { name: "N1", selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node1"},
+  FIXED: { name: "N2" , selectable: true, draggable: false, size: 15, width: 30, height:15, color: "red", type:"circle", id:"FIXED"},
+  node3: { name: "N3" , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node3"},
 }
 
 const edges: vNG.Edges = {
@@ -49,7 +49,15 @@ const configs = reactive(
         color: node => node.color,
       },
       label: {
-        visible: node => !!node.label,
+        visible: true,
+        fontFamily: undefined,
+        fontSize: 11,
+        lineHeight: 1.1,
+        color: "#000000",
+        margin: 4,
+        direction: "south",
+        text: "name",
+
       },
       focusring: {
         color: "darkgray",
