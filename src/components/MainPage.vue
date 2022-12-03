@@ -2,6 +2,7 @@
 import { reactive, ref } from "vue"
 import data from "./data"
 import * as vNG from "v-network-graph"
+import { TO_DISPLAY_STRING } from "@vue/compiler-core";
 
 
 const selectedNodes = ref<string[]>([])
@@ -37,18 +38,19 @@ function addNode3() {
   selectedNodes.value=[]
 }
 
-function addnode(){
+function addNode(){
     controlNode=false;
     addNode_()
 }
 
 
-function addNode_() {
+function addNode_(loc={x:20,y:20}) {
   const nodeId = `node${nextNodeIndex.value}`
   const name = `N${nextNodeIndex.value}`
   nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect"}:
   { name: name , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect"}
   nextNodeIndex.value++
+  data.layouts.nodes[nodeId]=loc
 
   return nodeId
 }
@@ -75,7 +77,11 @@ function addControl() {
   const se=edges[selectedEdges.value[0]]
   const [source, target] = [se.source, se.target]
   removeEdge()
-  const mid=addNode_()
+  var s_=data.layouts.nodes[source]
+  var t_=data.layouts.nodes[target]
+  var loc={x:0.5*(s_.x+t_.x), y:0.5*(s_.y+t_.y)}
+  const mid=addNode_(loc)
+
   selectedNodes.value=[source,mid]
   addEdge()
   selectedNodes.value=[mid,target]
@@ -93,6 +99,41 @@ function removeEdge() {
 function canNotDelete(){
   return selectedNodes.value.length==0 ||selectedNodes.value.includes("FIXED") 
 }
+
+
+function showContextMenu(element: HTMLElement, event: MouseEvent) {
+  element.style.left = event.x + "px"
+  element.style.top = event.y + "px"
+  element.style.visibility = "visible"
+  const handler = (event: PointerEvent) => {
+    if (!event.target || !element.contains(event.target as HTMLElement)) {
+      element.style.visibility = "hidden"
+      document.removeEventListener("pointerdown", handler, { capture: true })
+    }
+  }
+  document.addEventListener("pointerdown", handler, { passive: true, capture: true })
+}
+
+const nodeMenu = ref<HTMLDivElement>()
+const menuTargetNode = ref("")
+function showNodeContextMenu(params: vNG.NodeEvent<MouseEvent>) {
+  const { node, event } = params
+  // Disable browser's default context menu
+  event.stopPropagation()
+  event.preventDefault()
+  if (nodeMenu.value) {
+    menuTargetNode.value = data.nodes[node].name ?? ""
+    showContextMenu(nodeMenu.value, event)
+  }
+}
+
+
+const eventHandlers: vNG.EventHandlers = {
+  //"view:contextmenu": showViewContextMenu,
+  "node:contextmenu": showNodeContextMenu,
+  //"edge:contextmenu": showEdgeContextMenu,
+}
+
 
 </script>
 
@@ -140,7 +181,31 @@ function canNotDelete(){
     :edges="edges"
     :layouts="data.layouts"
     :configs="data.configs"
+    :event-handlers="eventHandlers"
   />
+
+  <div ref="nodeMenu" class="context-menu">
+      Menu for the nodes
+      <div>{{ menuTargetNode }}</div>
+    </div>
 </div>
 
 </template>
+
+<style lang="scss" scoped>
+.context-menu {
+  width: 180px;
+  background-color: #efefef;
+  padding: 10px;
+  position: fixed;
+  visibility: hidden;
+  font-size: 12px;
+  border: 1px solid #aaa;
+  box-shadow: 2px 2px 2px #aaa;
+  > div {
+    border: 1px dashed #aaa;
+    padding: 4px;
+    margin-top: 8px;
+  }
+}
+</style>
