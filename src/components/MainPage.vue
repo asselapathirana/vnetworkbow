@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import data from "./data"
+//import store from "../stores/store.ts"
+import { networkStore } from '../stores/store'
 import * as vNG from "v-network-graph"
 import { TO_DISPLAY_STRING } from "@vue/compiler-core";
 
+const store = networkStore()
 
-const selectedNodes = ref<string[]>([])
-
-const nodes: vNG.Nodes = reactive({ ...data.nodes })
-const edges: vNG.Edges = reactive({ ...data.edges })
-const nextNodeIndex = ref(Object.keys(nodes).length + 1)
-const nextEdgeIndex = ref(Object.keys(edges).length + 1)
-
+const nextNodeIndex = ref(Object.keys(store.nodes).length + 1)
+const nextEdgeIndex = ref(Object.keys(store.edges).length + 1)
 const selectedEdges = ref<string[]>([])
+const selectedNodes = ref<string[]>([])
 const zoomLevel = ref(5)
-
 var controlNode=false;
 
 
@@ -47,10 +44,10 @@ function addNode(){
 function addNode_(loc={x:20,y:20}) {
   const nodeId = `node${nextNodeIndex.value}`
   const name = `N${nextNodeIndex.value}`
-  nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect", id:nodeId}:
+  store.nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect", id:nodeId}:
   { name: name , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:nodeId}
   nextNodeIndex.value++
-  data.layouts.nodes[nodeId]=loc
+  store.layouts.nodes[nodeId]=loc
 
   return nodeId
 }
@@ -58,7 +55,7 @@ function addNode_(loc={x:20,y:20}) {
 function removeNode() {
   for (const nodeId of selectedNodes.value) {
     if (nodeId != "FIXED"){
-      delete nodes[nodeId]
+      delete store.nodes[nodeId]
     }
   }
 }
@@ -67,18 +64,18 @@ function addEdge() {
   if (selectedNodes.value.length !== 2) return
   const [source, target] = selectedNodes.value
   const edgeId = `edge${nextEdgeIndex.value}`
-  edges[edgeId] = { source, target, width:2, color:"black" }
+  store.edges[edgeId] = { source, target, width:2, color:"black" }
   nextEdgeIndex.value++
 }
 
 function addControl() {
   controlNode=true
   if (selectedEdges.value.length != 1) return
-  const se=edges[selectedEdges.value[0]]
+  const se=store.edges[selectedEdges.value[0]]
   const [source, target] = [se.source, se.target]
   removeEdge()
-  var s_=data.layouts.nodes[source]
-  var t_=data.layouts.nodes[target]
+  var s_=store.layouts.nodes[source]
+  var t_=store.layouts.nodes[target]
   var loc={x:0.5*(s_.x+t_.x), y:0.5*(s_.y+t_.y)}
   const mid=addNode_(loc)
 
@@ -92,7 +89,7 @@ function addControl() {
 
 function removeEdge() {
   for (const edgeId of selectedEdges.value) {
-    delete edges[edgeId]
+    delete store.edges[edgeId]
   }
 }
 
@@ -122,7 +119,7 @@ function showNodeContextMenu(params: vNG.NodeEvent<MouseEvent>) {
   event.stopPropagation()
   event.preventDefault()
   if (nodeMenu.value) {
-    menuTargetNode.value = data.nodes[node].name ?? ""
+    menuTargetNode.value = store.nodes[node].name ?? ""
     showContextMenu(nodeMenu.value, event)
   }
 }
@@ -133,10 +130,7 @@ const eventHandlers: vNG.EventHandlers = {
   "node:contextmenu": showNodeContextMenu,
   //"edge:contextmenu": showEdgeContextMenu,
 }
-
-
 </script>
-
 
 <template>
 <div class="vh-100">
@@ -172,15 +166,15 @@ const eventHandlers: vNG.EventHandlers = {
 
         <div >
       <el-checkbox 
-      min="data.configs.view.minZoomLevel"
-      max="data.configs.view.maxZoomLevel"
-      v-model="data.configs.view.scalingObjects">Scaling objects</el-checkbox>
+      min="store.configs.view.minZoomLevel"
+      max="store.configs.view.maxZoomLevel"
+      v-model="store.configs.view.scalingObjects">Scaling objects</el-checkbox>
       <el-slider-custom-zoom v-model="zoomLevel" />
     </div>
 
         <div class="control">
           <label>Field to show on the label:</label>
-          <el-select v-model="data.configs.node.label.text">
+          <el-select v-model="store.configs.node.label.text">
             <el-option label="id" value="id" />
             <el-option label="name" value="name" />
             <el-option label="type" value="type" />
@@ -188,13 +182,13 @@ const eventHandlers: vNG.EventHandlers = {
         </div>
 
         <demo-label-config-panel
-          v-model:visible="data.configs.node.label.visible"
-          v-model:fontFamily="data.configs.node.label.fontFamily"
-          v-model:fontSize="data.configs.node.label.fontSize"
-          v-model:lineHeight="data.configs.node.label.lineHeight"
-          v-model:color="data.configs.node.label.color"
-          v-model:margin="data.configs.node.label.margin"
-          v-model:direction="data.configs.node.label.direction"
+          v-model:visible="store.configs.node.label.visible"
+          v-model:fontFamily="store.configs.node.label.fontFamily"
+          v-model:fontSize="store.configs.node.label.fontSize"
+          v-model:lineHeight="store.configs.node.label.lineHeight"
+          v-model:color="store.configs.node.label.color"
+          v-model:margin="store.configs.node.label.margin"
+          v-model:direction="store.configs.node.label.direction"
         />
       </el-tab-pane>
   </el-tabs>
@@ -204,10 +198,10 @@ const eventHandlers: vNG.EventHandlers = {
     v-model:selected-nodes="selectedNodes"
     v-model:selected-edges="selectedEdges"
     v-model:zoom-level="zoomLevel"
-    :nodes="nodes"
-    :edges="edges"
-    :layouts="data.layouts"
-    :configs="data.configs"
+    :nodes="store.nodes"
+    :edges="store.edges"
+    :layouts="store.layouts"
+    :configs="store.configs"
     :event-handlers="eventHandlers"
   />
 
