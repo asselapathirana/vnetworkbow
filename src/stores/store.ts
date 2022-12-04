@@ -31,14 +31,20 @@ export const networkStore = defineStore('counter', () => {
       node3: { x: 50, y: 50 },
     },
   }))
+
+
   
-  
-  // In Node and Edge configuration, instead of concrete values,
+  /* 
+  1. In Node and Edge configuration, instead of concrete values,
   // you can specify functions that return a configuration value
   // with each node or edge as an argument.
   // In addition, custom types for Node and Edge can be explicitly
   // specified in `defineConfigs` to specify the argument types
   // for callback functions.
+   2. But then we can not wrap the entire configs as useStorage. Instead we only wrap hardcoded parts with useStorage. 
+
+  */
+
   const configs = reactive(
     vNG.defineConfigs<Node, Edge>({
       node: {
@@ -53,7 +59,7 @@ export const networkStore = defineStore('counter', () => {
           radius: node => node.size + 2,
           color: node => node.color,
         },
-        label: {
+        label: useStorage('configs_nodes_label',{
           visible: true,
           fontFamily: undefined,
           fontSize: 11,
@@ -63,21 +69,14 @@ export const networkStore = defineStore('counter', () => {
           direction: "south",
           text: "name",
   
-        },
-        focusring: {
+        }),
+        focusring: useStorage('configs_node_focusring',{
           color: "darkgray",
-        },
+        }),
         selectable: node => node.selectable,
         draggable: node => node.draggable,
       },
-      /* edge: {
-        normal: {
-          width: edge => edge.width, // Use the value of each edge object
-          color: edge => edge.color,
-          dasharray: edge => (edge.dashed ? "4" : "0"),
-        },
-      },*/
-      edge: {
+      edge: useStorage('configs_edge',{
         selectable: true,
         normal: {
           width: 3,
@@ -124,13 +123,13 @@ export const networkStore = defineStore('counter', () => {
             color: null,
           },
         },
-      },
+      }),
     
-      view: {
+      view: useStorage('configs_view',{
         scalingObjects: true,
         minZoomLevel: 0.1,
         maxZoomLevel: 16,
-      },
+      }),
       
     })
   )
