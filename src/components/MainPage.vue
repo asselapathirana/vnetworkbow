@@ -4,7 +4,8 @@ import { reactive, ref } from "vue"
 import { networkStore } from '../stores/store'
 import * as vNG from "v-network-graph"
 import { TO_DISPLAY_STRING } from "@vue/compiler-core";
-import { Download } from '@element-plus/icons-vue'
+import { Download, Upload } from '@element-plus/icons-vue'
+import type { UploadInstance } from 'element-plus'
 
 const store = networkStore()
 
@@ -16,6 +17,8 @@ const selectedNodes = ref<string[]>([])
 var controlNode=false;
 // ref="graph"
 const graph = ref<vNG.Instance>()
+
+const fileSelect = ref()
 
 
 function addNode2() {
@@ -149,15 +152,32 @@ async function downloadAsSvg() {
 }
 
 async function downloadJSON() {
-  if (!graph.value) return
-  const text = await graph.value.exportAsSvgText()
-  const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }))
+  const obj=await store.getLocalStorage
+  console.log("Text: ", obj)
+  const url = URL.createObjectURL(new Blob([JSON.stringify(obj)], { type: "octet/stream" }))
+  console.log("url:", url)
   const a = document.createElement("a")
   a.href = url
-  a.download = "network-graph.svg" // filename to download
+  a.download = "network-graph.json" // filename to download
   a.click()
   window.URL.revokeObjectURL(url)
 }
+
+const fileList = ref<UploadUserFile[]>([])
+
+
+function previewFiles(event) {
+    
+    console.log("Opening ... ",  event.target.files)
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      alert(reader.result);
+    };
+    const txt=reader.readAsText(event.target.files[0]);  
+    console.log("txt", txt)
+}
+
+
 
 </script>
 
@@ -195,10 +215,15 @@ async function downloadJSON() {
       <el-icon><download /></el-icon>
       Download SVG
     </el-button>
+    <el-button type="primary" @click="downloadJSON">
+      <el-icon><download /></el-icon>
+      Save
+    </el-button>
+    <input type="file" id="file" ref="fileSelect" class="custom-file-input" @change="previewFiles" />
     </el-tab-pane>
     <el-tab-pane label="Appearance">
 
-        <div >
+    <div >
       <el-checkbox 
       min="store.configs.view.minZoomLevel"
       max="store.configs.view.maxZoomLevel"

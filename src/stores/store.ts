@@ -149,13 +149,20 @@ export const networkStore = defineStore('counter', () => {
       
     })
   )
-  
 
+  const getLocalStorage = computed(() => {
+    return {...localStorage} })
+
+  
   return {
     nodes,
     edges,
     layouts,
     configs,
     zoomLevel,
+    getLocalStorage
   }
-})
+}, 
+
+
+)
