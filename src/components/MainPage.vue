@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue"
+import { reactive, ref, getCurrentInstance} from "vue"
 //import store from "../stores/store.ts"
 import { networkStore } from '../stores/store'
 import * as vNG from "v-network-graph"
@@ -143,7 +143,7 @@ const eventHandlers: vNG.EventHandlers = {
 async function downloadAsSvg() {
   if (!graph.value) return
   const text = await graph.value.exportAsSvgText()
-  const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }))
+  const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }))//{ type: "octet/stream" }))
   const a = document.createElement("a")
   a.href = url
   a.download = "network-graph.svg" // filename to download
@@ -171,10 +171,12 @@ function previewFiles(event) {
     console.log("Opening ... ",  event.target.files)
     var reader = new FileReader();
     reader.onload = function(event) {
-      alert(reader.result);
-    };
+      var textFromFileLoaded = reader.result
+      store.setLocalStorage(textFromFileLoaded)
+      location.reload();
+    }
     const txt=reader.readAsText(event.target.files[0]);  
-    console.log("txt", txt)
+    
 }
 
 
