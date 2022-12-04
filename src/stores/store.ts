@@ -4,6 +4,18 @@ import { useStorage } from '@vueuse/core'
 
 import * as vNG from "v-network-graph"
 
+/* clear local storage for debugging */
+//localStorage.clear();
+
+/*
+//with this way of iterating it
+for(var i=0, len=localStorage.length; i<len; i++) {
+  var key = localStorage.key(i);
+  var value = localStorage[key];
+  console.log(key + " => " + value);
+}
+*/
+
 export interface Node extends vNG.Node {
   selectable: boolean
   draggable: boolean

@@ -4,6 +4,7 @@ import { reactive, ref } from "vue"
 import { networkStore } from '../stores/store'
 import * as vNG from "v-network-graph"
 import { TO_DISPLAY_STRING } from "@vue/compiler-core";
+import { Download } from '@element-plus/icons-vue'
 
 const store = networkStore()
 
@@ -130,6 +131,23 @@ const eventHandlers: vNG.EventHandlers = {
   "node:contextmenu": showNodeContextMenu,
   //"edge:contextmenu": showEdgeContextMenu,
 }
+
+
+
+// ref="graph"
+const graph = ref<vNG.Instance>()
+
+async function downloadAsSvg() {
+  if (!graph.value) return
+  const text = await graph.value.exportAsSvgText()
+  const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }))
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "network-graph.svg" // filename to download
+  a.click()
+  window.URL.revokeObjectURL(url)
+}
+
 </script>
 
 <template>
@@ -160,9 +178,14 @@ const eventHandlers: vNG.EventHandlers = {
         >remove</el-button
       >
     </div>
-
   </el-tab-pane>
-      <el-tab-pane label="Appearance">
+  <el-tab-pane label="File">
+      <el-button type="primary" @click="downloadAsSvg">
+      <el-icon><download /></el-icon>
+      Download SVG
+    </el-button>
+    </el-tab-pane>
+    <el-tab-pane label="Appearance">
 
         <div >
       <el-checkbox 
@@ -195,6 +218,7 @@ const eventHandlers: vNG.EventHandlers = {
   </div>
 
 <v-network-graph
+    ref="graph" 
     v-model:selected-nodes="selectedNodes"
     v-model:selected-edges="selectedEdges"
     v-model:zoom-level="zoomLevel"
