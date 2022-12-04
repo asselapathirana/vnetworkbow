@@ -16,6 +16,8 @@ for(var i=0, len=localStorage.length; i<len; i++) {
 }
 */
 
+
+
 export interface Node extends vNG.Node {
   selectable: boolean
   draggable: boolean
@@ -24,6 +26,8 @@ export interface Node extends vNG.Node {
 }
 
 export const networkStore = defineStore('counter', () => {
+
+  const zoomLevel = reactive(useStorage("zoomLevel",5))
 
   const nodes: Nodes = reactive(useStorage('nodes',{
     node1: { name: "N1", selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node1"},
@@ -152,5 +156,6 @@ export const networkStore = defineStore('counter', () => {
     edges,
     layouts,
     configs,
+    zoomLevel,
   }
 })

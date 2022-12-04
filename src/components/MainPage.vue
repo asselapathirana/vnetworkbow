@@ -12,8 +12,10 @@ const nextNodeIndex = ref(Object.keys(store.nodes).length + 1)
 const nextEdgeIndex = ref(Object.keys(store.edges).length + 1)
 const selectedEdges = ref<string[]>([])
 const selectedNodes = ref<string[]>([])
-const zoomLevel = ref(5)
+
 var controlNode=false;
+// ref="graph"
+const graph = ref<vNG.Instance>()
 
 
 function addNode2() {
@@ -134,10 +136,19 @@ const eventHandlers: vNG.EventHandlers = {
 
 
 
-// ref="graph"
-const graph = ref<vNG.Instance>()
 
 async function downloadAsSvg() {
+  if (!graph.value) return
+  const text = await graph.value.exportAsSvgText()
+  const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }))
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "network-graph.svg" // filename to download
+  a.click()
+  window.URL.revokeObjectURL(url)
+}
+
+async function downloadJSON() {
   if (!graph.value) return
   const text = await graph.value.exportAsSvgText()
   const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }))
@@ -192,7 +203,7 @@ async function downloadAsSvg() {
       min="store.configs.view.minZoomLevel"
       max="store.configs.view.maxZoomLevel"
       v-model="store.configs.view.scalingObjects">Scaling objects</el-checkbox>
-      <el-slider-custom-zoom v-model="zoomLevel" />
+      <el-slider-custom-zoom v-model="store.zoomLevel" />
     </div>
 
         <div class="control">
@@ -221,7 +232,7 @@ async function downloadAsSvg() {
     ref="graph" 
     v-model:selected-nodes="selectedNodes"
     v-model:selected-edges="selectedEdges"
-    v-model:zoom-level="zoomLevel"
+    v-model:zoom-level="store.zoomLevel"
     :nodes="store.nodes"
     :edges="store.edges"
     :layouts="store.layouts"
