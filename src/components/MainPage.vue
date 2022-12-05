@@ -4,7 +4,7 @@ import { reactive, ref, getCurrentInstance, onMounted, onUnmounted} from "vue"
 import { networkStore } from '../stores/store'
 import * as vNG from "v-network-graph"
 import { TO_DISPLAY_STRING } from "@vue/compiler-core";
-import { Download, Upload } from '@element-plus/icons-vue'
+import { Download, Upload, Link } from '@element-plus/icons-vue'
 import type { UploadInstance } from 'element-plus'
 
 const store = networkStore()
@@ -222,9 +222,14 @@ onUnmounted(()=>{
 <template>
 <div class="vh-100">
 <div class="container-fluid p-1 bg-primary text-white text-center">
-  <h1>V Network Graph</h1>
-</div>
-
+  <div class="row">
+        <div class="col"><h1>Bow-Tie Diagram for Risk Analysis</h1></div>
+        <div class="col text-right">An Infrastructure Asset Management Tool 
+          Assela Pathirana 
+    <a href="https://assela.pathirana.net" target="_new"><el-icon color="white"><Link /></el-icon></a>
+    <a href="https://www.un-ihe.org/people/staff/assela-pathirana" target="_new"><el-icon color="white"><Link /></el-icon></a></div>
+    </div>
+  </div>
 <div class="demo-control-panel">
   <el-tabs type="border-card">
     <el-tab-pane label="Structure">
