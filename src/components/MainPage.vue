@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, getCurrentInstance} from "vue"
+import { reactive, ref, getCurrentInstance, onMounted, onUnmounted} from "vue"
 //import store from "../stores/store.ts"
 import { networkStore } from '../stores/store'
 import * as vNG from "v-network-graph"
@@ -125,7 +125,7 @@ function showNodeContextMenu(params: vNG.NodeEvent<MouseEvent>) {
   event.stopPropagation()
   event.preventDefault()
   if (nodeMenu.value) {
-    menuTargetNode.value = store.nodes[node].name ?? ""
+    menuTargetNode.value = store.nodes[node] ?? ""
     showContextMenu(nodeMenu.value, event)
   }
 }
@@ -179,6 +179,41 @@ function previewFiles(event) {
     
 }
 
+function reset(event) {
+    store.setLocalStorage("{}")
+      location.reload();
+
+}
+
+function onKeyPress(event){
+  return // temporirily disabled
+  console.log("Event", event)
+  if (event.key=="Delete" || event.key=="Backspace"){
+
+    for (const nn of selectedNodes.value){
+      delete store.nodes[nn]
+      console.log("Delete ...", nn)
+    }
+    for (const ee of selectedEdges.value){
+      delete store.edges[ee]
+      console.log("Delete ...", ee)
+    }
+  }
+  if (event.key=="Escape"){
+    selectedNodes.value=[]
+    selectedEdges.value=[]
+  }
+
+}
+
+onMounted(() => {
+  window.addEventListener('keyup', onKeyPress)
+})
+
+onUnmounted(()=>{
+  window.removeEventListener('keyup', onKeyPress)
+
+})
 
 
 </script>
@@ -195,8 +230,9 @@ function previewFiles(event) {
     <div>
       <label>Node:</label>
       <el-button @click="addNode">add</el-button>
-      <el-button @click="addNode2" :disabled="selectedNodes.length != 1">add2</el-button>
-      <el-button @click="addNode3" :disabled="selectedNodes.length != 1">add3</el-button>
+      <el-button @click="addNode2" :disabled="selectedNodes.length != 1">Effect</el-button>
+      <el-button @click="addNode3" :disabled="selectedNodes.length != 1">Cause</el-button>
+      <el-button @click="addControl" :disabled="selectedEdges.length != 1" type="info">Add Control</el-button>
       <el-button :disabled="canNotDelete()" @click="removeNode"
         >remove</el-button
       >
@@ -205,7 +241,7 @@ function previewFiles(event) {
       <label>Edge:</label>
       <el-button :disabled="selectedNodes.length != 2" @click="addEdge"
         >add</el-button>
-      <el-button @click="addControl" :disabled="selectedEdges.length != 1">Add Control</el-button>
+      
     
       <el-button :disabled="selectedEdges.length == 0" @click="removeEdge"
         >remove</el-button
@@ -221,8 +257,11 @@ function previewFiles(event) {
       <el-icon><download /></el-icon>
       Save
     </el-button>
+
     <input type="file" id="file" ref="fileSelect" class="custom-file-input" @change="previewFiles" />
+    <el-button type="danger" @click="reset">Reset All </el-button>
     </el-tab-pane>
+
     <el-tab-pane label="Appearance">
 
     <div >
@@ -268,8 +307,8 @@ function previewFiles(event) {
   />
 
   <div ref="nodeMenu" class="context-menu">
-      Menu for the nodes
-      <div>{{ menuTargetNode }}</div>
+      Edit
+      <textarea  v-model="menuTargetNode.name" />
     </div>
 </div>
 
