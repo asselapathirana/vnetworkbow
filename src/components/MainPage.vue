@@ -9,8 +9,7 @@ import type { UploadInstance } from 'element-plus'
 
 const store = networkStore()
 
-const nextNodeIndex = ref(Object.keys(store.nodes).length + 1)
-const nextEdgeIndex = ref(Object.keys(store.edges).length + 1)
+
 const selectedEdges = ref<string[]>([])
 const selectedNodes = ref<string[]>([])
 
@@ -48,11 +47,11 @@ function addNode(){
 
 
 function addNode_(loc={x:20,y:20}) {
-  const nodeId = `node${nextNodeIndex.value}`
-  const name = `N${nextNodeIndex.value}`
+  const nodeId = `N-${store.nextNodeIndex}`
+  console.log("ID: ", nodeId)
+  const name = `N-${store.nextNodeIndex} Name`
   store.nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect", id:nodeId}:
   { name: name , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:nodeId}
-  nextNodeIndex.value++
   store.layouts.nodes[nodeId]=loc
 
   return nodeId
@@ -69,9 +68,8 @@ function removeNode() {
 function addEdge() {
   if (selectedNodes.value.length !== 2) return
   const [source, target] = selectedNodes.value
-  const edgeId = `edge${nextEdgeIndex.value}`
+  const edgeId = `edge${store.nextEdgeIndex}`
   store.edges[edgeId] = { source, target, width:2, color:"black" }
-  nextEdgeIndex.value++
 }
 
 function addControl() {

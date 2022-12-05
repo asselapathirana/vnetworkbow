@@ -28,10 +28,27 @@ export const networkStore = defineStore('counter', () => {
 
   const zoomLevel = reactive(useLocalStorage("zoomLevel",5))
 
+  const nextNodeIndex = computed(() => {
+    var nl=Object.keys(nodes.value).map(id => parseInt(id.replace(/\D/g, ""))).filter(n=>!Number.isNaN(n))
+    var ind = Math.max(...nl) +1 
+    //console.log("ind:", ind)
+
+    return ind
+})
+
+const nextEdgeIndex = computed(() => {
+  var nl = Object.keys(edges.value).map(id => parseInt(id.replace(/\D/g, ""))).filter(n=>!Number.isNaN(n))
+  var ind = Math.max(...nl) +1 
+  //console.log("ind:", ind)
+  //console.log("edges:", Object.keys(edges.value))
+  return ind
+})
+
+
   const nodes: Nodes = reactive(useLocalStorage('nodes',{
-    node1: { name: "N1", selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node1"},
-    FIXED: { name: "N2" , selectable: true, draggable: false, size: 15, width: 30, height:15, color: "red", type:"circle", id:"FIXED"},
-    node3: { name: "N3" , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node3"},
+    N_1: { name: "Cause", selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node1"},
+    FIXED: { name: "Hazard" , selectable: true, draggable: false, size: 15, width: 30, height:15, color: "red", type:"circle", id:"FIXED"},
+    N_2: { name: "Effect" , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node3"},
   }))
   
   const edges: vNG.Edges = reactive(useLocalStorage('edges',{
@@ -181,6 +198,8 @@ export const networkStore = defineStore('counter', () => {
     zoomLevel,
     getLocalStorage,
     setLocalStorage,
+    nextNodeIndex,
+    nextEdgeIndex,
   }
 }, 
 
