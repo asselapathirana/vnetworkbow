@@ -48,7 +48,7 @@ function addNode(){
 
 function addNode_(loc={x:20,y:20}) {
   const nodeId = `N-${store.nextNodeIndex}`
-  console.log("ID: ", nodeId)
+  //console.log("ID: ", nodeId)
   const name = `N-${store.nextNodeIndex} Name`
   store.nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect", id:nodeId}:
   { name: name , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:nodeId}
