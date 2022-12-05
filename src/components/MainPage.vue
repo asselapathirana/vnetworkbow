@@ -154,7 +154,8 @@ async function downloadAsSvg() {
 async function downloadJSON() {
   const obj=await store.getLocalStorage
   console.log("Text: ", obj)
-  const url = URL.createObjectURL(new Blob([JSON.stringify(obj)], { type: "octet/stream" }))
+  const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2) // spacing level = 2
+                                           ], { type: "octet/stream" }))
   console.log("url:", url)
   const a = document.createElement("a")
   a.href = url

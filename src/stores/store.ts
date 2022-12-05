@@ -150,7 +150,14 @@ export const networkStore = defineStore('counter', () => {
   )
 
   const getLocalStorage = computed(() => {
-    return {...localStorage} })
+    const ls={}
+    for(var i=0;i<localStorage.length; i++) {
+      var key = localStorage.key( i )
+      ls[key]=JSON.parse(localStorage.getItem( key ) )
+    }
+    return ls
+  })
+  
 
   function setLocalStorage(jsonobj){
     var ls=JSON.parse(jsonobj)
@@ -159,7 +166,8 @@ export const networkStore = defineStore('counter', () => {
    window.localStorage.clear()
    for(const key in ls) {
       console.log("key:", key)
-      window.localStorage.setItem(key,ls[key])
+      const str=typeof ls[key]=="string"? ls[key]: JSON.stringify(ls[key])
+      window.localStorage.setItem(key,str)
     } 
     console.log("Localstorage: ", window.localStorage)
   }
