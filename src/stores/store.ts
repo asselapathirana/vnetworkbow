@@ -26,7 +26,7 @@ export interface Node extends vNG.Node {
 
 export const networkStore = defineStore('counter', () => {
 
-  const zoomLevel = reactive(useLocalStorage("zoomLevel",5))
+  const zoomLevel = reactive(useLocalStorage("zoomLevel",5), { mergeDefaults: true })
 
   const nextNodeIndex = computed(() => {
     var nl=Object.keys(nodes.value).map(id => parseInt(id.replace(/\D/g, ""))).filter(n=>!Number.isNaN(n))
@@ -49,20 +49,20 @@ const nextEdgeIndex = computed(() => {
     N_1: { name: "Cause", selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node1"},
     FIXED: { name: "Hazard" , selectable: true, draggable: false, size: 15, width: 30, height:15, color: "red", type:"circle", id:"FIXED"},
     N_2: { name: "Effect" , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node3"},
-  }))
+  }, { mergeDefaults: true }))
   
   const edges: vNG.Edges = reactive(useLocalStorage('edges',{
-    edge1: { source: "node1", target: "FIXED" , width:2, color:"black"},
-    edge2: { source: "FIXED", target: "node3", width:2, color:"black"},
-  }))
+    edge1: { source: "N_1", target: "FIXED" , width:2, color:"black"},
+    edge2: { source: "FIXED", target: "N_2", width:2, color:"black"},
+  }, { mergeDefaults: true }))
   
   const layouts: vNG.Layouts = reactive(useLocalStorage('layouts',{
     nodes: {
-      node1: { x: -50, y: 50 },
+      N_1: { x: -50, y: 50 },
       FIXED: { x: 0, y: 0 },
-      node3: { x: 50, y: 50 },
+      N_2: { x: 50, y: 50 },
     },
-  }))
+  }, { mergeDefaults: true }))
 
 
   
@@ -101,10 +101,10 @@ const nextEdgeIndex = computed(() => {
           direction: "south",
           text: "name",
   
-        }),
+        }, { mergeDefaults: true }),
         focusring: useLocalStorage('configs_node_focusring',{
           color: "darkgray",
-        }),
+        }, { mergeDefaults: true }),
         selectable: node => node.selectable,
         draggable: node => node.draggable,
       },
@@ -155,13 +155,14 @@ const nextEdgeIndex = computed(() => {
             color: null,
           },
         },
-      }),
+      }, { mergeDefaults: true }),
     
       view: useLocalStorage('configs_view',{
         scalingObjects: true,
         minZoomLevel: 0.1,
         maxZoomLevel: 16,
-      }),
+        layoutHandler: new vNG.GridLayout({ grid: 15 }),
+      }, { mergeDefaults: true } ),
       
     })
   )
