@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 
 import * as vNG from "v-network-graph"
+import { buildLocaleContext } from "element-plus"
 
 /* clear local storage for debugging */
 //localStorage.clear();
@@ -26,7 +27,33 @@ export interface Node extends vNG.Node {
 
 export const networkStore = defineStore('counter', () => {
 
-  const zoomLevel = reactive(useLocalStorage("zoomLevel",5), { mergeDefaults: true })
+  const zoomLevel = reactive(useLocalStorage("zoomLevel",3), { mergeDefaults: false })
+
+  const appearance = reactive( useLocalStorage("appearance",
+  {
+    hazard:{color:'red',
+            size:15, 
+            height:30, 
+            type:"circle",
+            },
+    cause:{color:'blue',
+            size:30, 
+            height:30, 
+            type:"rect",
+            },
+    effect:{color:'purple',
+            size:30, 
+            height:30, 
+            type:"rect",
+            },
+    control:{color:'grey',
+            size:10, 
+            height:30, 
+            type:"rect",
+            },
+  },
+  { mergeDefaults: false }))
+
 
   const nextNodeIndex = computed(() => {
     var nl=Object.keys(nodes.value).map(id => parseInt(id.replace(/\D/g, ""))).filter(n=>!Number.isNaN(n))
@@ -46,23 +73,30 @@ const nextEdgeIndex = computed(() => {
 
 
   const nodes: Nodes = reactive(useLocalStorage('nodes',{
-    N_1: { name: "Cause", selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node1"},
-    FIXED: { name: "Hazard" , selectable: true, draggable: false, size: 15, width: 30, height:15, color: "red", type:"circle", id:"FIXED"},
-    N_2: { name: "Effect" , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:"node3"},
-  }, { mergeDefaults: true }))
+    N_1: { name: "Cause", selectable: true, draggable: true, kind:'cause',  id:"N-1"},
+    FIXED: { name: "Hazard" , selectable: true, draggable: false, kind:'hazard' ,  id:"FIXED"},
+    N_2: { name: "Effect" , selectable: true, draggable: true, kind:'effect' ,  id:"N-2"},
+    N_3: { name: "Control 1" , selectable: true, draggable: true, kind:'control' ,  id:"N-3"},
+    N_4: { name: "Control 2" , selectable: true, draggable: true, kind:'control' ,  id:"N-4"},
+  }, { mergeDefaults: false }))
   
   const edges: vNG.Edges = reactive(useLocalStorage('edges',{
-    edge1: { source: "N_1", target: "FIXED" , width:2, color:"black"},
-    edge2: { source: "FIXED", target: "N_2", width:2, color:"black"},
-  }, { mergeDefaults: true }))
+    edge1: { source: "N_1", target: "N_3" , width:2, color:"black"},
+    edge2: { source: "N_3", target: "FIXED", width:2, color:"black"},
+    edge3: { source: "FIXED", target: "N_4" , width:2, color:"black"},
+    edge4: { source: "N_4", target: "N_2", width:2, color:"black"},
+
+  }, { mergeDefaults: false } ))
   
   const layouts: vNG.Layouts = reactive(useLocalStorage('layouts',{
     nodes: {
-      N_1: { x: -50, y: 50 },
+      N_1: { x: -100, y: 100 },
       FIXED: { x: 0, y: 0 },
-      N_2: { x: 50, y: 50 },
+      N_2: { x: 100, y: 100 },
+      N_3: {x: -50, y:50},
+      N_4: {x: 50, y:50},
     },
-  }, { mergeDefaults: true }))
+  }, { mergeDefaults: false }))
 
 
   
@@ -77,34 +111,39 @@ const nextEdgeIndex = computed(() => {
 
   */
 
+  function getkind(x){
+    return (x.kind === undefined) ? "cause" : x.kind
+  }
+
+
   const configs = reactive(
     vNG.defineConfigs<Node, Edge>({
       node: {
         normal: {
-          type: node => node.type,
-          radius: node => node.size, // Use the value of each node object
-          color: node => node.color,
-          width: node => node.width,
-          height: node => node.height
+          type: node => appearance.value[getkind(node)].type,
+          radius: node => appearance.value[getkind(node)].size,
+          color: node => appearance.value[getkind(node)].color,
+          width: node => appearance.value[getkind(node)].size,
+          height: node => appearance.value[getkind(node)].height
         },
         hover: {
-          radius: node => node.size + 2,
-          color: node => node.color,
+          radius: node => appearance.value[getkind(node)].size + 2,
+          color: node => appearance.value[getkind(node)].color,
         },
         label: useLocalStorage('configs_nodes_label',{
           visible: true,
           fontFamily: undefined,
-          fontSize: 11,
+          fontSize: 8,
           lineHeight: 1.1,
           color: "#000000",
           margin: 4,
           direction: "south",
           text: "name",
   
-        }, { mergeDefaults: true }),
+        }, { mergeDefaults: false }),
         focusring: useLocalStorage('configs_node_focusring',{
           color: "darkgray",
-        }, { mergeDefaults: true }),
+        }, { mergeDefaults: false }),
         selectable: node => node.selectable,
         draggable: node => node.draggable,
       },
@@ -155,14 +194,14 @@ const nextEdgeIndex = computed(() => {
             color: null,
           },
         },
-      }, { mergeDefaults: true }),
+      }, { mergeDefaults: false }),
     
       view: useLocalStorage('configs_view',{
         scalingObjects: true,
         minZoomLevel: 0.1,
         maxZoomLevel: 16,
         layoutHandler: new vNG.GridLayout({ grid: 15 }),
-      }, { mergeDefaults: true } ),
+      }, { mergeDefaults: false } ),
       
     })
   )
@@ -178,8 +217,7 @@ const nextEdgeIndex = computed(() => {
   
 
   function setLocalStorage(jsonobj){
-    var ls=JSON.parse(jsonobj)
-
+   var ls=JSON.parse(jsonobj)
    console.log("jsonobj:")
    window.localStorage.clear()
    for(const key in ls) {
@@ -188,8 +226,21 @@ const nextEdgeIndex = computed(() => {
       window.localStorage.setItem(key,str)
     } 
     console.log("Localstorage: ", window.localStorage)
+    location.reload()
   }
 
+
+  function loadFile(event) {
+    
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var textFromFileLoaded = reader.result
+      setLocalStorage(textFromFileLoaded)
+      
+    }
+    const txt=reader.readAsText(event.target.files[0]);  
+    
+}
   
   return {
     nodes,
@@ -201,6 +252,8 @@ const nextEdgeIndex = computed(() => {
     setLocalStorage,
     nextNodeIndex,
     nextEdgeIndex,
+    appearance,
+    loadFile,
   }
 }, 
 

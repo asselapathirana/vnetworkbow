@@ -13,6 +13,7 @@ const store = networkStore()
 const selectedEdges = ref<string[]>([])
 const selectedNodes = ref<string[]>([])
 
+
 var controlNode=false;
 // ref="graph"
 const graph = ref<vNG.Instance>()
@@ -165,24 +166,7 @@ async function downloadJSON() {
 const fileList = ref<UploadUserFile[]>([])
 
 
-function previewFiles(event) {
-    
-    console.log("Opening ... ",  event.target.files)
-    var reader = new FileReader();
-    reader.onload = function(event) {
-      var textFromFileLoaded = reader.result
-      store.setLocalStorage(textFromFileLoaded)
-      location.reload();
-    }
-    const txt=reader.readAsText(event.target.files[0]);  
-    
-}
 
-function reset(event) {
-    store.setLocalStorage("{}")
-      location.reload();
-
-}
 
 function onKeyPress(event){
   return // temporirily disabled
@@ -214,6 +198,9 @@ onUnmounted(()=>{
 
 })
 
+function reset(event) {
+    store.setLocalStorage("{}")
+  }
 
 </script>
 
@@ -262,13 +249,12 @@ onUnmounted(()=>{
       Save
     </el-button>
 
-    <input type="file" id="file" ref="fileSelect" class="custom-file-input" @change="previewFiles" />
+    <input type="file" id="file" ref="fileSelect" class="custom-file-input" @change="store.loadFile" />
     <el-button type="danger" @click="reset">Reset All </el-button>
-    </el-tab-pane>
+  </el-tab-pane>
 
     <el-tab-pane label="Appearance">
-
-    <div >
+      <div >
       <el-checkbox 
       min="store.configs.view.minZoomLevel"
       max="store.configs.view.maxZoomLevel"
@@ -281,7 +267,7 @@ onUnmounted(()=>{
           <el-select v-model="store.configs.node.label.text">
             <el-option label="id" value="id" />
             <el-option label="name" value="name" />
-            <el-option label="type" value="type" />
+            <el-option label="kind" value="kind" />
           </el-select>
         </div>
 
@@ -294,6 +280,8 @@ onUnmounted(()=>{
           v-model:margin="store.configs.node.label.margin"
           v-model:direction="store.configs.node.label.direction"
         />
+  
+
       </el-tab-pane>
   </el-tabs>
   </div>
@@ -313,6 +301,13 @@ onUnmounted(()=>{
   <div ref="nodeMenu" class="context-menu">
       Edit
       <textarea  v-model="menuTargetNode.name" />
+      <label for="type">Kind</label>
+    <select name="type" v-model="menuTargetNode.kind">
+    <option value="hazard">Hazard</option>
+    <option value="cause">Cause</option>
+    <option value="effect">Effect</option>
+    <option value="control">Control</option>
+    </select>
     </div>
 </div>
 
