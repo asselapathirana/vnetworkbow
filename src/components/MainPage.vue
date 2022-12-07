@@ -256,10 +256,10 @@ function reset(event) {
     <el-tab-pane label="Appearance">
       <div >
       <el-checkbox 
-      min="store.configs.view.minZoomLevel"
-      max="store.configs.view.maxZoomLevel"
       v-model="store.configs.view.scalingObjects">Scaling objects</el-checkbox>
       <el-slider-custom-zoom v-model="store.zoomLevel" />
+      <el-checkbox 
+      v-model="store.snap">Snap to grid (restarts!)</el-checkbox>
     </div>
 
         <div class="control">

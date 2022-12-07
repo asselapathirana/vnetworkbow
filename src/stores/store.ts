@@ -1,4 +1,4 @@
-import { reactive, ref, computed } from "vue"
+import { reactive, ref, computed, watch } from "vue"
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -28,6 +28,11 @@ export interface Node extends vNG.Node {
 export const networkStore = defineStore('counter', () => {
 
   const zoomLevel = reactive(useLocalStorage("zoomLevel",3), { mergeDefaults: false })
+  const snap = reactive(useLocalStorage("snap",true), { mergeDefaults: false })
+
+  watch(snap, () => {
+    location.reload()
+  })
 
   const appearance = reactive( useLocalStorage("appearance",
   {
@@ -115,6 +120,12 @@ const nextEdgeIndex = computed(() => {
     return (x.kind === undefined) ? "cause" : x.kind
   }
 
+  const configs_view=reactive(useLocalStorage('configs_view',{
+    scalingObjects: true,
+    minZoomLevel: 0.1,
+    maxZoomLevel: 16,
+  }, { mergeDefaults: false } ))
+
 
   const configs = reactive(
     vNG.defineConfigs<Node, Edge>({
@@ -196,12 +207,12 @@ const nextEdgeIndex = computed(() => {
         },
       }, { mergeDefaults: false }),
     
-      view: useLocalStorage('configs_view',{
-        scalingObjects: true,
-        minZoomLevel: 0.1,
-        maxZoomLevel: 16,
-        layoutHandler: new vNG.GridLayout({ grid: 15 }),
-      }, { mergeDefaults: false } ),
+      view: {
+        scalingObjects: configs_view.value.scalingObjects,
+        minZoomLevel: configs_view.value.minZoomLevel,
+        maxZoomLevel: configs_view.value.maxZoomLevel,
+        layoutHandler: snap.value? new vNG.GridLayout({grid: 15 }): new vNG.SimpleLayout()
+      } ,
       
     })
   )
@@ -254,6 +265,7 @@ const nextEdgeIndex = computed(() => {
     nextEdgeIndex,
     appearance,
     loadFile,
+    snap,
   }
 }, 
 
