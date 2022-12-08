@@ -269,7 +269,7 @@ const nextEdgeIndex = computed(() => {
 
   function readExample(){
     
-    fetch('/public/examples/bow_tie_template.json')
+    fetch('/examples/bow_tie_template.json')
       .then(res => res.text())
       .then((out) => {
           console.log('Output: ', out);
