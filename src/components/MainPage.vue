@@ -15,6 +15,7 @@ const selectedNodes = ref<string[]>([])
 
 
 var controlNode=false;
+var causeNode=false;
 // ref="graph"
 const graph = ref<vNG.Instance>()
 
@@ -23,6 +24,7 @@ const fileSelect = ref()
 
 function addNode2() {
   controlNode=false;
+  causeNode=false;
   //Add downstream node to the selected node and connect it. 
   if (selectedNodes.value.length !== 1) return
   selectedNodes.value.push(addNode_())
@@ -32,6 +34,7 @@ function addNode2() {
 
 function addNode3() {
   controlNode=false;
+  causeNode=true;
   //Add  upstream node to the selected node and connect it. 
   if (selectedNodes.value.length !== 1) return
   const id_ = selectedNodes.value.pop()
@@ -51,8 +54,8 @@ function addNode_(loc={x:20,y:20}) {
   const nodeId = `N-${store.nextNodeIndex}`
   //console.log("ID: ", nodeId)
   const name = `N-${store.nextNodeIndex} Name`
-  store.nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, size: 15, width: 10, height:30, color: "grey", type:"rect", id:nodeId}:
-  { name: name , selectable: true, draggable: true, size: 15, width: 30, height:15, color: "blue", type:"rect", id:nodeId}
+  store.nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, kind:"control", id:nodeId}:
+  causeNode? { name: name , selectable: true, draggable: true, kind:"cause", id:nodeId}: { name: name , selectable: true, draggable: true, kind:"effect", id:nodeId}
   store.layouts.nodes[nodeId]=loc
 
   return nodeId
@@ -200,6 +203,7 @@ onUnmounted(()=>{
 
 function reset(event) {
     store.setLocalStorage("{}")
+    
   }
 
 </script>

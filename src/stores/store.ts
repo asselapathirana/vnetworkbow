@@ -92,28 +92,27 @@ const nextEdgeIndex = computed(() => {
 
 
   const nodes: Nodes = reactive(useLocalStorage('nodes',{
-    N_1: { name: "Cause", selectable: true, draggable: true, kind:'cause',  id:"N-1"},
-    FIXED: { name: "Hazard" , selectable: true, draggable: false, kind:'hazard' ,  id:"FIXED"},
-    N_2: { name: "Effect" , selectable: true, draggable: true, kind:'effect' ,  id:"N-2"},
-    N_3: { name: "Control 1" , selectable: true, draggable: true, kind:'control' ,  id:"N-3"},
-    N_4: { name: "Control 2" , selectable: true, draggable: true, kind:'control' ,  id:"N-4"},
+  //  N_1: { name: "Cause", selectable: true, draggable: true, kind:'cause',  id:"N-1"},
+  //  FIXED: { name: "Hazard" , selectable: true, draggable: false, kind:'hazard' ,  id:"FIXED"},
+  //  N_2: { name: "Effect" , selectable: true, draggable: true, kind:'effect' ,  id:"N-2"},
+  //  N_3: { name: "Control 1" , selectable: true, draggable: true, kind:'control' ,  id:"N-3"},
+  //  N_4: { name: "Control 2" , selectable: true, draggable: true, kind:'control' ,  id:"N-4"},
   }, { mergeDefaults: false }))
   
   const edges: vNG.Edges = reactive(useLocalStorage('edges',{
-    edge1: { source: "N_1", target: "N_3" , width:2, color:"black"},
-    edge2: { source: "N_3", target: "FIXED", width:2, color:"black"},
-    edge3: { source: "FIXED", target: "N_4" , width:2, color:"black"},
-    edge4: { source: "N_4", target: "N_2", width:2, color:"black"},
-
+  //  edge1: { source: "N_1", target: "N_3" , width:2, color:"black"},
+  //  edge2: { source: "N_3", target: "FIXED", width:2, color:"black"},
+  //  edge3: { source: "FIXED", target: "N_4" , width:2, color:"black"},
+  //  edge4: { source: "N_4", target: "N_2", width:2, color:"black"},
   }, { mergeDefaults: false } ))
   
   const layouts: vNG.Layouts = reactive(useLocalStorage('layouts',{
     nodes: {
-      N_1: { x: -100, y: 100 },
-      FIXED: { x: 0, y: 0 },
-      N_2: { x: 100, y: 100 },
-      N_3: {x: -50, y:50},
-      N_4: {x: 50, y:50},
+    //  N_1: { x: -100, y: 100 },
+    //  FIXED: { x: 0, y: 0 },
+    //  N_2: { x: 100, y: 100 },
+    //  N_3: {x: -50, y:50},
+    //  N_4: {x: 50, y:50},
     },
   }, { mergeDefaults: false }))
 
