@@ -1,4 +1,4 @@
-import { reactive, ref, computed, watch } from "vue"
+import { reactive, ref, computed, watch, onUnmounted } from "vue"
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -16,7 +16,18 @@ for(var i=0, len=localStorage.length; i<len; i++) {
 }
 */
 
+var clearLocalStorage =false
+/*
+onMounted(() => {
+  window.addEventListener('keyup', onKeyPress)
+})
+*/
 
+onUnmounted( () => {if (clearLocalStorage){
+  console.log("Finally clearing local storage!")
+  localStorage.clear()
+  }
+})
 
 export interface Node extends vNG.Node {
   selectable: boolean
@@ -26,6 +37,8 @@ export interface Node extends vNG.Node {
 }
 
 export const networkStore = defineStore('counter', () => {
+
+
 
   const zoomLevel = reactive(useLocalStorage("zoomLevel",3), { mergeDefaults: false })
   const snap = reactive(useLocalStorage("snap",true), { mergeDefaults: false })
@@ -237,6 +250,7 @@ const nextEdgeIndex = computed(() => {
       window.localStorage.setItem(key,str)
     } 
     console.log("Localstorage: ", window.localStorage)
+    clearLocalStorage=true
     location.reload()
   }
 
