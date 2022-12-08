@@ -16,18 +16,7 @@ for(var i=0, len=localStorage.length; i<len; i++) {
 }
 */
 
-var clearLocalStorage =false
-/*
-onMounted(() => {
-  window.addEventListener('keyup', onKeyPress)
-})
-*/
 
-onUnmounted( () => {if (clearLocalStorage){
-  console.log("Finally clearing local storage!")
-  localStorage.clear()
-  }
-})
 
 export interface Node extends vNG.Node {
   selectable: boolean
@@ -39,6 +28,18 @@ export interface Node extends vNG.Node {
 export const networkStore = defineStore('counter', () => {
 
 
+  var clearLocalStorage =ref(false)
+  /*
+  onMounted(() => {
+    window.addEventListener('keyup', onKeyPress)
+  })
+  */
+
+  onUnmounted( () => {if (clearLocalStorage.value){
+    console.log("Finally clearing local storage!".repeat(100))
+    localStorage.clear()
+    }
+  })
 
   const zoomLevel = reactive(useLocalStorage("zoomLevel",3), { mergeDefaults: false })
   const snap = reactive(useLocalStorage("snap",true), { mergeDefaults: false })
@@ -250,7 +251,7 @@ const nextEdgeIndex = computed(() => {
       window.localStorage.setItem(key,str)
     } 
     console.log("Localstorage: ", window.localStorage)
-    clearLocalStorage=true
+    clearLocalStorage.value=true
     location.reload()
   }
 
