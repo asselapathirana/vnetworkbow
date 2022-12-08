@@ -1,0 +1,182 @@
+{
+  "appearance": {
+    "hazard": {
+      "color": "red",
+      "size": 15,
+      "height": 30,
+      "type": "circle"
+    },
+    "cause": {
+      "color": "blue",
+      "size": 30,
+      "height": 30,
+      "type": "rect"
+    },
+    "effect": {
+      "color": "purple",
+      "size": 30,
+      "height": 30,
+      "type": "rect"
+    },
+    "control": {
+      "color": "grey",
+      "size": 10,
+      "height": 30,
+      "type": "rect"
+    }
+  },
+  "configs_edge": {
+    "selectable": true,
+    "normal": {
+      "width": 3,
+      "color": "#4466cc",
+      "dasharray": "0",
+      "linecap": "butt",
+      "animate": false,
+      "animationSpeed": 50
+    },
+    "hover": {
+      "width": 4,
+      "color": "#3355bb",
+      "dasharray": "0",
+      "linecap": "butt",
+      "animate": false,
+      "animationSpeed": 50
+    },
+    "selected": {
+      "width": 3,
+      "color": "#dd8800",
+      "dasharray": "6",
+      "linecap": "round",
+      "animate": false,
+      "animationSpeed": 50
+    },
+    "gap": 5,
+    "type": "straight",
+    "margin": 2,
+    "marker": {
+      "source": {
+        "type": "none",
+        "width": 4,
+        "height": 4,
+        "margin": -1,
+        "units": "strokeWidth",
+        "color": null
+      },
+      "target": {
+        "type": "arrow",
+        "width": 4,
+        "height": 4,
+        "margin": -1,
+        "units": "strokeWidth",
+        "color": null
+      }
+    }
+  },
+  "nodes": {
+    "N_1": {
+      "name": "Cause",
+      "selectable": true,
+      "draggable": true,
+      "kind": "cause",
+      "id": "N-1"
+    },
+    "FIXED": {
+      "name": "Hazard",
+      "selectable": true,
+      "draggable": false,
+      "kind": "hazard",
+      "id": "FIXED"
+    },
+    "N_2": {
+      "name": "Effect",
+      "selectable": true,
+      "draggable": true,
+      "kind": "effect",
+      "id": "N-2"
+    },
+    "N_3": {
+      "name": "Control 1",
+      "selectable": true,
+      "draggable": true,
+      "kind": "control",
+      "id": "N-3"
+    },
+    "N_4": {
+      "name": "Control 2",
+      "selectable": true,
+      "draggable": true,
+      "kind": "control",
+      "id": "N-4"
+    }
+  },
+  "layouts": {
+    "nodes": {
+      "N_1": {
+        "x": -100,
+        "y": 100
+      },
+      "FIXED": {
+        "x": 0,
+        "y": 0
+      },
+      "N_2": {
+        "x": 100,
+        "y": 100
+      },
+      "N_3": {
+        "x": -50,
+        "y": 50
+      },
+      "N_4": {
+        "x": 50,
+        "y": 50
+      }
+    }
+  },
+  "configs_node_focusring": {
+    "color": "darkgray"
+  },
+  "configs_view": {
+    "scalingObjects": true,
+    "minZoomLevel": 0.1,
+    "maxZoomLevel": 16
+  },
+  "edges": {
+    "edge1": {
+      "source": "N_1",
+      "target": "N_3",
+      "width": 2,
+      "color": "black"
+    },
+    "edge2": {
+      "source": "N_3",
+      "target": "FIXED",
+      "width": 2,
+      "color": "black"
+    },
+    "edge3": {
+      "source": "FIXED",
+      "target": "N_4",
+      "width": 2,
+      "color": "black"
+    },
+    "edge4": {
+      "source": "N_4",
+      "target": "N_2",
+      "width": 2,
+      "color": "black"
+    }
+  },
+  "snap": true,
+  "zoomLevel": 3,
+  "configs_nodes_label": {
+    "visible": true,
+    "fontSize": 8,
+    "lineHeight": 1.1,
+    "color": "#000000",
+    "margin": 4,
+    "direction": "south",
+    "text": "name"
+  }
+}

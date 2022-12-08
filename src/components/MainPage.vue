@@ -50,6 +50,8 @@ function addNode(){
 }
 
 
+
+
 function addNode_(loc={x:20,y:20}) {
   const nodeId = `N-${store.nextNodeIndex}`
   //console.log("ID: ", nodeId)
@@ -202,8 +204,8 @@ onUnmounted(()=>{
 })
 
 function reset(event) {
-    store.setLocalStorage("{}")
-    
+    //store.setLocalStorage("{}")
+    store.readExample()
   }
 
 </script>

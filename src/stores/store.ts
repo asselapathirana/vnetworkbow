@@ -265,7 +265,19 @@ const nextEdgeIndex = computed(() => {
     }
     const txt=reader.readAsText(event.target.files[0]);  
     
-}
+  }
+
+  function readExample(){
+    
+    fetch('/public/examples/bow_tie_template.json')
+      .then(res => res.text())
+      .then((out) => {
+          console.log('Output: ', out);
+          setLocalStorage(out)
+  }).catch(err => console.error(err));
+  
+  }
+
   
   return {
     nodes,
@@ -280,6 +292,7 @@ const nextEdgeIndex = computed(() => {
     appearance,
     loadFile,
     snap,
+    readExample,
   }
 }, 
 
