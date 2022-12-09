@@ -1,29 +1,13 @@
 {
-  "appearance": {
-    "hazard": {
-      "color": "red",
-      "size": 15,
-      "height": 30,
-      "type": "circle"
-    },
-    "cause": {
-      "color": "blue",
-      "size": 30,
-      "height": 30,
-      "type": "rect"
-    },
-    "effect": {
-      "color": "purple",
-      "size": 30,
-      "height": 30,
-      "type": "rect"
-    },
-    "control": {
-      "color": "grey",
-      "size": 10,
-      "height": 30,
-      "type": "rect"
-    }
+  "configs_nodes_label": {
+    "visible": true,
+    "fontSize": 8,
+    "lineHeight": 1.1,
+    "color": "#000000",
+    "margin": 4,
+    "direction": "south",
+    "text": "name",
+    "fontFamily": "sans-serif"
   },
   "configs_edge": {
     "selectable": true,
@@ -169,14 +153,43 @@
     }
   },
   "snap": true,
-  "zoomLevel": 3,
-  "configs_nodes_label": {
-    "visible": true,
-    "fontSize": 8,
-    "lineHeight": 1.1,
-    "color": "#000000",
-    "margin": 4,
-    "direction": "south",
-    "text": "name"
+  "zoomLevel": 2.2783657024025845,
+  "appearance": {
+    "escal": {
+      "color": "khaki",
+      "size": 30,
+      "height": 30,
+      "type": "rect"
+    },
+    "empty": {
+      "color": "LightBlue",
+      "size": 30,
+      "height": 30,
+      "type": "rect"
+    },
+    "hazard": {
+      "color": "red",
+      "size": 15,
+      "height": 30,
+      "type": "circle"
+    },
+    "cause": {
+      "color": "blue",
+      "size": 30,
+      "height": 30,
+      "type": "rect"
+    },
+    "effect": {
+      "color": "purple",
+      "size": 30,
+      "height": 30,
+      "type": "rect"
+    },
+    "control": {
+      "color": "grey",
+      "size": 10,
+      "height": 30,
+      "type": "rect"
+    }
   }
 }

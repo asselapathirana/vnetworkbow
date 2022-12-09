@@ -167,7 +167,7 @@ const nextEdgeIndex = computed(() => {
         },
         label: useLocalStorage('configs_nodes_label',{
           visible: true,
-          fontFamily: undefined,
+          fontFamily: 'sans-serif',
           fontSize: 8,
           lineHeight: 1.1,
           color: "#000000",
