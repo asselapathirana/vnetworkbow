@@ -50,6 +50,16 @@ export const networkStore = defineStore('counter', () => {
 
   const appearance = reactive( useLocalStorage("appearance",
   {
+    escal:{color:'yellow',
+            size:30, 
+            height:30, 
+            type:"rect",
+          },
+    empty:{color:'white',
+          size:30, 
+          height:30, 
+          type:"rect",
+        },
     hazard:{color:'red',
             size:15, 
             height:30, 
@@ -71,9 +81,10 @@ export const networkStore = defineStore('counter', () => {
             type:"rect",
             },
   },
-  { mergeDefaults: false }))
+  { mergeDefaults: true }))
 
 
+  
   const nextNodeIndex = computed(() => {
     var nl=Object.keys(nodes.value).map(id => parseInt(id.replace(/\D/g, ""))).filter(n=>!Number.isNaN(n))
     var ind = Math.max(...nl) +1 
@@ -130,7 +141,7 @@ const nextEdgeIndex = computed(() => {
   */
 
   function getkind(x){
-    return (x.kind === undefined) ? "cause" : x.kind
+    return (x.kind === undefined) ? "empty" : x.kind
   }
 
   const configs_view=reactive(useLocalStorage('configs_view',{

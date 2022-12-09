@@ -14,50 +14,55 @@ const selectedEdges = ref<string[]>([])
 const selectedNodes = ref<string[]>([])
 
 
-var controlNode=false;
-var causeNode=false;
 // ref="graph"
 const graph = ref<vNG.Instance>()
 
 const fileSelect = ref()
+var kind = "empty"
 
-
-function addNode2() {
+function addEffectNode() {
   controlNode=false;
   causeNode=false;
   //Add downstream node to the selected node and connect it. 
   if (selectedNodes.value.length !== 1) return
-  selectedNodes.value.push(addNode_())
+  selectedNodes.value.push(addEmptyNode_())
   addEdge()
   selectedNodes.value=[]
 }
 
-function addNode3() {
-  controlNode=false;
-  causeNode=true;
+function addCauseNode() {
+  kind="cause"
   //Add  upstream node to the selected node and connect it. 
   if (selectedNodes.value.length !== 1) return
   const id_ = selectedNodes.value.pop()
-  selectedNodes.value.push(addNode_())
+  selectedNodes.value.push(addEmptyNode_())
   selectedNodes.value.push(id_)
   addEdge()
   selectedNodes.value=[]
 }
 
-function addNode(){
-    controlNode=false;
-    addNode_()
+
+function addEscalNode() {
+  kind="escal"
+  //Add  upstream node to the selected node and connect it. 
+  if (selectedNodes.value.length !== 1) return
+  const id_ = selectedNodes.value.pop()
+  selectedNodes.value.push(addEmptyNode_())
+  selectedNodes.value.push(id_)
+  addEdge()
+  selectedNodes.value=[]
 }
 
+function addEmptyNode(){
+    kind="empty"
+    addEmptyNode_()
+}
 
-
-
-function addNode_(loc={x:20,y:20}) {
+function addEmptyNode_(loc={x:20,y:20}) {
   const nodeId = `N-${store.nextNodeIndex}`
   //console.log("ID: ", nodeId)
   const name = `N-${store.nextNodeIndex} Name`
-  store.nodes[nodeId] = controlNode? { name: name , selectable: true, draggable: true, kind:"control", id:nodeId}:
-  causeNode? { name: name , selectable: true, draggable: true, kind:"cause", id:nodeId}: { name: name , selectable: true, draggable: true, kind:"effect", id:nodeId}
+  store.nodes[nodeId] = { name: name , selectable: true, draggable: true, kind: kind, id:nodeId}
   store.layouts.nodes[nodeId]=loc
 
   return nodeId
@@ -78,7 +83,7 @@ function addEdge() {
   store.edges[edgeId] = { source, target, width:2, color:"black" }
 }
 
-function addControl() {
+function addControlNode() {
   controlNode=true
   if (selectedEdges.value.length != 1) return
   const se=store.edges[selectedEdges.value[0]]
@@ -87,7 +92,7 @@ function addControl() {
   var s_=store.layouts.nodes[source]
   var t_=store.layouts.nodes[target]
   var loc={x:0.5*(s_.x+t_.x), y:0.5*(s_.y+t_.y)}
-  const mid=addNode_(loc)
+  const mid=addEmptyNode_(loc)
 
   selectedNodes.value=[source,mid]
   addEdge()
@@ -226,10 +231,11 @@ function reset(event) {
     <el-tab-pane label="Structure">
     <div>
       <label>Node:</label>
-      <el-button @click="addNode">add</el-button>
-      <el-button @click="addNode2" :disabled="selectedNodes.length != 1">Effect</el-button>
-      <el-button @click="addNode3" :disabled="selectedNodes.length != 1">Cause</el-button>
-      <el-button @click="addControl" :disabled="selectedEdges.length != 1" type="info">Add Control</el-button>
+      <el-button @click="addEmptyNode">add</el-button>
+      <el-button @click="addEffectNode" :disabled="selectedNodes.length != 1">Effect</el-button>
+      <el-button @click="addCauseNode" :disabled="selectedNodes.length != 1">Cause</el-button>
+      <el-button @click="addEscalNode" :disabled="selectedNodes.length != 1">Escalation</el-button>
+      <el-button @click="addControlNode" :disabled="selectedEdges.length != 1" type="info">Add Control</el-button>
       <el-button :disabled="canNotDelete()" @click="removeNode"
         >remove</el-button
       >
@@ -313,6 +319,8 @@ function reset(event) {
     <option value="cause">Cause</option>
     <option value="effect">Effect</option>
     <option value="control">Control</option>
+    <option value="escal">Escalation</option>
+    <option value="empty">Empty</option>
     </select>
     </div>
 </div>
