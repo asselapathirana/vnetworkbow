@@ -50,12 +50,12 @@ export const networkStore = defineStore('counter', () => {
 
   const appearance = reactive( useLocalStorage("appearance",
   {
-    escal:{color:'yellow',
+    escal:{color:'khaki',
             size:30, 
             height:30, 
             type:"rect",
           },
-    empty:{color:'white',
+    empty:{color:'LightBlue',
           size:30, 
           height:30, 
           type:"rect",
