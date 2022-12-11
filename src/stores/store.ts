@@ -16,8 +16,6 @@ for(var i=0, len=localStorage.length; i<len; i++) {
 }
 */
 
-
-
 export interface Node extends vNG.Node {
   selectable: boolean
   draggable: boolean

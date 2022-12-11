@@ -261,7 +261,10 @@ function reset(event) {
       Save
     </el-button>
     <label for="file" class="el-button el-button--primary" >Upload <el-icon><upload /></el-icon></label>
-      <input type="file" id="file" ref="fileSelect" class="el-button el-button--primary" @change="store.loadFile" style="display:none" />
+      <input type="file" id="file" ref="fileSelect" 
+      class="el-button el-button--primary" @change="store.loadFile" style="display:none" 
+      accept="application/JSON" 
+      />
     <el-button type="danger" @click="reset">Reset All (Load template) </el-button>
   </el-tab-pane>
 
