@@ -20,12 +20,17 @@ const graph = ref<vNG.Instance>()
 const fileSelect = ref()
 var kind = "empty"
 
+
+
 function addEffectNode() {
-  controlNode=false;
-  causeNode=false;
+  kind='effect'
   //Add downstream node to the selected node and connect it. 
   if (selectedNodes.value.length !== 1) return
+  console.log('adding effect node')
+  //const id_ = selectedNodes.value.pop()
   selectedNodes.value.push(addEmptyNode_())
+  console.log('added effect node')
+  //selectedNodes.value.push(id_)
   addEdge()
   selectedNodes.value=[]
 }
@@ -62,9 +67,9 @@ function addEmptyNode_(loc={x:20,y:20}) {
   const nodeId = `N-${store.nextNodeIndex}`
   //console.log("ID: ", nodeId)
   const name = `N-${store.nextNodeIndex} Name`
+  console.log("Adding node as: ", nodeId, name, kind)
   store.nodes[nodeId] = { name: name , selectable: true, draggable: true, kind: kind, id:nodeId}
   store.layouts.nodes[nodeId]=loc
-
   return nodeId
 }
 
@@ -84,7 +89,7 @@ function addEdge() {
 }
 
 function addControlNode() {
-  controlNode=true
+  kind='control'
   if (selectedEdges.value.length != 1) return
   const se=store.edges[selectedEdges.value[0]]
   const [source, target] = [se.source, se.target]
@@ -92,6 +97,8 @@ function addControlNode() {
   var s_=store.layouts.nodes[source]
   var t_=store.layouts.nodes[target]
   var loc={x:0.5*(s_.x+t_.x), y:0.5*(s_.y+t_.y)}
+
+ 
   const mid=addEmptyNode_(loc)
 
   selectedNodes.value=[source,mid]
